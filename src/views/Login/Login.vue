@@ -12,12 +12,12 @@
         <el-form :model="person" :rules="rules" ref="person" class="demo-person">
           <el-row>
             <el-col>
-              <el-form-item prop="name">
+              <el-form-item prop="username">
                 <el-input
                   size="medium"
                   placeholder="请输入用户名"
                   suffix-icon="el-icon-user"
-                  v-model="person.name"
+                  v-model="person.username"
                 ></el-input>
               </el-form-item>
             </el-col>
@@ -45,6 +45,7 @@
 <script lang="ts">
 import { Vue } from "vue-property-decorator";
 import Component from "vue-class-component";
+import axios from "axios";
 @Component({
   name: "Login",
   components: {}
@@ -55,27 +56,56 @@ export default class Login extends Vue {
     logoimg: "login-logoimg.jpg"
   };
   person: object = {
-    name: "",
+    username: "",
     password: ""
   };
   rules: object = {
-    name: [
+    username: [
       { required: true, message: "请输入用户名", trigger: "blur" },
-      { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
+      { min: 1, max: 20, message: "长度在 1 到 20 个字符", trigger: "blur" }
     ],
     password: [{ required: true, message: "请输入密码", trigger: "blur" }]
   };
-  submitForm(formName: any) {
-    console.log(formName);
-    let personFrom: any = this.$refs[formName];
-    personFrom.validate((valid: any) => {
-      if (valid) {
-        alert("submit!");
+  async submitForm(formName: any) {
+    try {
+      console.log(formName);
+      let personFrom: any = this.$refs[formName];
+      personFrom.validate();
+      // 只要验证成功（ 异步操作完成 ），这句代码才会执行
+      // 如果验证失败（ 异步操作失败 ），这句代码就不会执行了
+      // console.log('验证成功：', res)
+      //   // 验证成功：登录的代码逻辑
+      const res = await axios.post(
+        "http://localhost:8888/api/private/v1/login",
+        this.person
+      );
+
+      let myThis: any = this;
+      if (res.data.meta.status === 200) {
+        // 登陆成功：
+        // 3 将登录标识 token 存储到 localStorage 中
+        // 注意：先保存 token ，再跳转路由，因为 跳转路由的时候，导航守卫中获取了 token。如果在获取token前，没有存储 token ，就出问题了
+        localStorage.setItem("token", res.data.data.token);
+        // 1 跳转到首页
+        this.$router.push({ name: "Home" });
+        // 2 登录成功的消息提示：
+        myThis.$message({
+          message: res.data.meta.msg,
+          type: "success",
+          duration: 800
+        });
       } else {
-        console.log("error submit!!");
-        return false;
+        // 登录失败
+        // this.$message.error(res.data.meta.msg)
+        myThis.$message({
+          type: "error",
+          message: res.data.meta.msg,
+          duration: 1000
+        });
       }
-    });
+    } catch (err) {
+      // console.log('验证失败：', err)
+    }
   }
   //图片路径拼接
   getIcon(icon: string) {

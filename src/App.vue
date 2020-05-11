@@ -13,5 +13,10 @@ export default {
 
 <style>
 @import url("./assets/css/normalize.css");
-
+html,
+body,
+#app {
+  max-width: 100vw;
+  min-height: 100vh;
+}
 </style>

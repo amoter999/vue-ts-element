@@ -58,7 +58,6 @@ http.interceptors.response.use(
     return Promise.reject(info);
   }
 );
-
 /**
  * 创建统一封装过的 axios 实例
  * @return {AxiosInstance}
