@@ -28,6 +28,7 @@
                 <el-input
                   size="medium"
                   placeholder="请输入密码"
+                  type="password"
                   suffix-icon="el-icon-key"
                   v-model="person.password"
                 ></el-input>
