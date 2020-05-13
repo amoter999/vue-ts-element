@@ -25,45 +25,32 @@
       </el-header>
       <el-container>
         <el-aside width="200px" class="home-aside">
-          <el-menu
-            default-active="2"
-            class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
-          >
-            <el-submenu index="1">
-              <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>导航一</span>
-              </template>
-              <el-menu-item-group>
-                <template slot="title">分组一</template>
-                <el-menu-item index="1-1">选项1</el-menu-item>
-                <el-menu-item index="1-2">选项2</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="分组2">
-                <el-menu-item index="1-3">选项3</el-menu-item>
-              </el-menu-item-group>
-              <el-submenu index="1-4">
-                <template slot="title">选项4</template>
-                <el-menu-item index="1-4-1">选项1</el-menu-item>
+          <div class="inner-home-aside">
+            <el-menu
+              default-active="2"
+              class="el-menu-vertical-demo"
+              @open="handleOpen"
+              @close="handleClose"
+              v-for="floorItem1 in menuList"
+              :key="floorItem1.id"
+            >
+              <el-submenu :index="floorItem1.id+''">
+                <template slot="title">
+                  <i class="el-icon-location"></i>
+                  <span>{{floorItem1.authName}}</span>
+                </template>
+                <el-menu-item
+                  v-for="floorItem2 in floorItem1.children"
+                  :key="floorItem2.id"
+                  :index="floorItem2.id+''"
+                >{{floorItem2.authName}}</el-menu-item>
               </el-submenu>
-            </el-submenu>
-            <el-menu-item index="2">
-              <i class="el-icon-menu"></i>
-              <span slot="title">导航二</span>
-            </el-menu-item>
-            <el-menu-item index="3" disabled>
-              <i class="el-icon-document"></i>
-              <span slot="title">导航三</span>
-            </el-menu-item>
-            <el-menu-item index="4">
-              <i class="el-icon-setting"></i>
-              <span slot="title">导航四</span>
-            </el-menu-item>
-          </el-menu>
+            </el-menu>
+          </div>
         </el-aside>
-        <el-main class="home-main">Main</el-main>
+        <el-main class="home-main">
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -71,6 +58,7 @@
 <script lang="ts">
 import { Vue } from "vue-property-decorator";
 import Component from "vue-class-component";
+import axios from "axios";
 @Component({
   name: "Home",
   components: {}
@@ -80,6 +68,7 @@ export default class Home extends Vue {
     logoImg: "login-logoimg.jpg",
     avatarImg: "default_header.png"
   };
+  menuList: any[] = [];
   //图片路径拼接
   handleCommand(command: any) {
     if (command === "logout") {
@@ -89,6 +78,9 @@ export default class Home extends Vue {
         name: "Profile"
       });
     }
+  }
+  created() {
+    this.getMenuList();
   }
   handleOpen() {}
   handleClose() {}
@@ -118,6 +110,12 @@ export default class Home extends Vue {
       });
   }
   handleSelect() {}
+  async getMenuList() {
+    const res = await axios.get("/menus");
+    console.log(res);
+    this.menuList = res.data.data;
+    console.log("this.menuList", this.menuList);
+  }
   getIcon(icon: string) {
     try {
       return require(`@/assets/images/${icon}`);
@@ -136,10 +134,9 @@ export default class Home extends Vue {
     height: 60px;
     border-bottom: 1px solid #efefef;
     .left-header {
-      width: 180px;
+      width: 160px;
       height: 100%;
       float: left;
-      padding-right: 20px;
       box-sizing: border-box;
       display: flex;
       align-items: center;
@@ -211,14 +208,20 @@ export default class Home extends Vue {
   }
   .home-aside {
     background-color: #f91;
-    background-color: #fff;
-    box-shadow: 0px 0px 20px 0px rgba(17, 105, 172, 0.1);
+    background-color: #f5f5f5;
+    padding-right: 20px;
+    .inner-home-aside {
+      height: 100%;
+      background-color: #fff;
+      box-shadow: 0px 0px 20px 0px rgba(17, 105, 172, 0.1);
+    }
     .el-menu {
       border-right: 0;
     }
   }
   .home-main {
-    background-color: #fff;
+    background-color: #f5f5f5;
+    padding-left: 0;
   }
 }
 </style>
