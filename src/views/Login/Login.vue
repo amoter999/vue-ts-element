@@ -76,10 +76,7 @@ export default class Login extends Vue {
       // 如果验证失败（ 异步操作失败 ），这句代码就不会执行了
       // console.log('验证成功：', res)
       //   // 验证成功：登录的代码逻辑
-      const res = await axios.post(
-        "http://localhost:8888/api/private/v1/login",
-        this.person
-      );
+      const res = await axios.post("/login", this.person);
 
       let myThis: any = this;
       if (res.data.meta.status === 200) {
@@ -88,7 +85,7 @@ export default class Login extends Vue {
         // 注意：先保存 token ，再跳转路由，因为 跳转路由的时候，导航守卫中获取了 token。如果在获取token前，没有存储 token ，就出问题了
         localStorage.setItem("token", res.data.data.token);
         // 1 跳转到首页
-        this.$router.push({ name: "Home" });
+        this.$router.push({ name: "home" });
         // 2 登录成功的消息提示：
         myThis.$message({
           message: res.data.meta.msg,

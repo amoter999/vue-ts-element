@@ -7,7 +7,7 @@
         </div>
         <div class="right-header">
           <div class="left-head-Icon">
-            <i class="el-icon-s-unfold"></i>
+            <i class="el-icon-s-unfold" @click="clickCollapse"></i>
           </div>
           <div class="right-head-cont">
             <el-dropdown @command="handleCommand">
@@ -24,31 +24,45 @@
         </div>
       </el-header>
       <el-container>
-        <el-aside width="200px" class="home-aside">
-          <div class="inner-home-aside">
-            <el-menu
-              default-active="2"
-              class="el-menu-vertical-demo"
-              @open="handleOpen"
-              @close="handleClose"
+        <el-aside class="home-aside" width="auto">
+          <!-- -->
+          <el-menu
+            :unique-opened="true"
+            :router="true"
+            :style="{width:setSideWidth}"
+            @open="handleOpen"
+            :collapse-transition="false"
+            :collapse="isCollapse"
+            @close="handleClose"
+          >
+            <el-submenu
+              :index="floorItem1.id+''"
               v-for="floorItem1 in menuList"
               :key="floorItem1.id"
             >
-              <el-submenu :index="floorItem1.id+''">
-                <template slot="title">
-                  <i class="el-icon-location"></i>
-                  <span>{{floorItem1.authName}}</span>
-                </template>
-                <el-menu-item
-                  v-for="floorItem2 in floorItem1.children"
-                  :key="floorItem2.id"
-                  :index="floorItem2.id+''"
-                >{{floorItem2.authName}}</el-menu-item>
-              </el-submenu>
-            </el-menu>
-          </div>
+              <template slot="title">
+                <i class="el-icon-menu"></i>
+                <span>{{floorItem1.authName}}</span>
+              </template>
+              <el-menu-item
+                v-for="floorItem2 in floorItem1.children"
+                :key="floorItem2.id"
+                :index="'/'+floorItem2.path"
+              >
+                <i class="el-icon-location"></i>
+                <span>{{floorItem2.authName}}</span>
+              </el-menu-item>
+            </el-submenu>
+          </el-menu>
+          <!-- <div class="inner-home-aside"></div> -->
         </el-aside>
         <el-main class="home-main">
+          <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item></el-breadcrumb-item>
+            <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+            <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+          </el-breadcrumb>
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -69,13 +83,22 @@ export default class Home extends Vue {
     avatarImg: "default_header.png"
   };
   menuList: any[] = [];
+  isCollapse: boolean = false;
+  isStart: boolean = false;
+  setSideWidth: string = "200px";
+  clickCollapse() {
+    this.isCollapse = !this.isCollapse;
+    this.isCollapse
+      ? (this.setSideWidth = "auto")
+      : (this.setSideWidth = "200px");
+  }
   //图片路径拼接
   handleCommand(command: any) {
     if (command === "logout") {
       this.logout();
     } else if (command === "profile") {
       this.$router.push({
-        name: "Profile"
+        name: "profile"
       });
     }
   }
@@ -84,6 +107,11 @@ export default class Home extends Vue {
   }
   handleOpen() {}
   handleClose() {}
+  // clickThisEnter(path: string) {
+  //   this.$router.push({
+  //     name: path
+  //   });
+  // }
   logout() {
     let that: any = this;
     that
@@ -95,7 +123,7 @@ export default class Home extends Vue {
       .then(() => {
         localStorage.removeItem("token");
         this.$router.replace({
-          name: "Login"
+          name: "login"
         });
         that.$message({
           type: "success",
@@ -137,6 +165,7 @@ export default class Home extends Vue {
       width: 160px;
       height: 100%;
       float: left;
+      margin-right: 20px;
       box-sizing: border-box;
       display: flex;
       align-items: center;
@@ -208,20 +237,26 @@ export default class Home extends Vue {
   }
   .home-aside {
     background-color: #f91;
-    background-color: #f5f5f5;
-    padding-right: 20px;
+    background-color: #fff;
+    min-height: 100%;
     .inner-home-aside {
       height: 100%;
       background-color: #fff;
       box-shadow: 0px 0px 20px 0px rgba(17, 105, 172, 0.1);
     }
+    .el-submenu .el-menu-item {
+      min-width: auto;
+    }
     .el-menu {
       border-right: 0;
+      .el-menu-item {
+        user-select: none;
+      }
     }
   }
   .home-main {
     background-color: #f5f5f5;
-    padding-left: 0;
+    // padding-left: 0;
   }
 }
 </style>
