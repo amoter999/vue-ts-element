@@ -54,7 +54,7 @@ import axios from "axios";
 export default class Login extends Vue {
   assetImgs: object = {
     leftImg: "leftimg.png",
-    logoimg: "login-logoimg.jpg"
+    logoimg: "login-logoimg.png"
   };
   person: object = {
     username: "",
@@ -139,12 +139,12 @@ export default class Login extends Vue {
     align-items: center;
     .innerbox {
       .logoimg {
-        width: 100%;
+        width: 314px;
         margin: 0 auto 50px;
         img {
           display: block;
-          width: 314px;
-          height: 172px;
+          width: 200px;
+          margin: 0 auto;
         }
       }
       .loginText {

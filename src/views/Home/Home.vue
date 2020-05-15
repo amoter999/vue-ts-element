@@ -31,6 +31,7 @@
             :router="true"
             :style="{width:setSideWidth}"
             @open="handleOpen"
+            default-active="/users"
             :collapse-transition="false"
             :collapse="isCollapse"
             @close="handleClose"
@@ -57,12 +58,6 @@
           <!-- <div class="inner-home-aside"></div> -->
         </el-aside>
         <el-main class="home-main">
-          <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item></el-breadcrumb-item>
-            <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-            <el-breadcrumb-item>活动详情</el-breadcrumb-item>
-          </el-breadcrumb>
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -79,7 +74,7 @@ import axios from "axios";
 })
 export default class Home extends Vue {
   assetImgs: object = {
-    logoImg: "login-logoimg.jpg",
+    logoImg: "login-logoimg.png",
     avatarImg: "default_header.png"
   };
   menuList: any[] = [];
@@ -171,7 +166,7 @@ export default class Home extends Vue {
       align-items: center;
       justify-content: center;
       .logoImg {
-        width: 80px;
+        width: 100px;
       }
     }
     .el-menu--horizontal > .el-submenu .el-submenu__title {
