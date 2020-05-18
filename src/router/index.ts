@@ -89,7 +89,7 @@ router.beforeEach((to: any, from: any, next: any) => {
   if (to.path === "/login") {
     return next();
   }
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   if (token) {
     next();
   } else {

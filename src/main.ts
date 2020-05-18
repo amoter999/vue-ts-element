@@ -18,7 +18,7 @@ axios.defaults.baseURL = "http://localhost:8888/api/private/v1/";
 axios.interceptors.request.use(
   config => {
     // 在此处，统一处理 请求头，处理后，就不需要在每个请求中，单独的处理了
-    config.headers.Authorization = localStorage.getItem("token");
+    config.headers.Authorization = sessionStorage.getItem("token");
     return config;
   },
   error => {

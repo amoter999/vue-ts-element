@@ -81,9 +81,9 @@ export default class Login extends Vue {
       let myThis: any = this;
       if (res.data.meta.status === 200) {
         // 登陆成功：
-        // 3 将登录标识 token 存储到 localStorage 中
+        // 3 将登录标识 token 存储到 sessionStorage 中
         // 注意：先保存 token ，再跳转路由，因为 跳转路由的时候，导航守卫中获取了 token。如果在获取token前，没有存储 token ，就出问题了
-        localStorage.setItem("token", res.data.data.token);
+        sessionStorage.setItem("token", res.data.data.token);
         // 1 跳转到首页
         this.$router.push({ name: "home" });
         // 2 登录成功的消息提示：

@@ -116,7 +116,7 @@ export default class Home extends Vue {
         type: "warning"
       })
       .then(() => {
-        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
         this.$router.replace({
           name: "login"
         });
