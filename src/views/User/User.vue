@@ -7,8 +7,8 @@
     </el-breadcrumb>
     <div class="user-main">
       <div class="search-sec">
-        <el-input placeholder="请输入内容" v-model="searchCont" class="input-with-select se-input">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-input placeholder="请输入姓名进行搜索" v-model="searchCont" class="input-with-select se-input">
+          <el-button slot="append" icon="el-icon-search" @click.enter="searchRes"></el-button>
         </el-input>
         <el-button type="primary" @click="addUserInfo">添加用户</el-button>
       </div>
@@ -42,13 +42,15 @@
                 size="mini"
                 type="danger"
                 icon="el-icon-delete"
+                :disabled="scope.row.id===500"
                 @click="delThisUser(scope.row.id)"
               >删除</el-button>
               <el-button
                 size="mini"
                 type="success"
                 icon="el-icon-thumb"
-                @click="handleDelete(scope.$index, scope.row)"
+                :disabled="scope.row.id===500"
+                @click="dtbRoles(scope.row)"
               >分配角色</el-button>
             </template>
           </el-table-column>
@@ -89,7 +91,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="showEditDialog = false">取 消</el-button>
+        <el-button @click="showAddDialog = false">取 消</el-button>
         <el-button type="primary" @click="ensureAddUserInfo">确 定</el-button>
       </div>
     </el-dialog>
@@ -111,6 +113,35 @@
         <el-button type="primary" @click="ensureModUserInfo">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 分配角色 -->
+    <el-dialog title="分配角色" :close-on-click-modal="false" :visible.sync="showDtbRoleDialog">
+      <el-form
+        :model="dtbForm"
+        :rules="dtbRolesRules"
+        ref="dtbRolesRules"
+        class="demo-ruleForm"
+        label-width="80px"
+        label-position="left"
+      >
+        <el-form-item label="用户名" prop="username">
+          <el-input type="text" v-model="dtbForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="角色选择" prop="chooseRole">
+          <el-select v-model="dtbForm.chooseRole" placeholder="请选择">
+            <el-option
+              v-for="item in roleList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="showDtbRoleDialog = false">取 消</el-button>
+        <el-button type="primary" @click="ensureDtbRoles">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script lang="ts">
@@ -126,16 +157,14 @@ export default class userManage extends Vue {
   userInfoList: object[] = [];
   totalNum: number = 0;
   currentPage: number = 1;
-  pageSize: number = 8;
+  pageSize: number = 6;
   showEditDialog: boolean = false;
   showAddDialog: boolean = false;
+  showDtbRoleDialog: boolean = false;
+  roleList: any[] = [];
   editForm: any = {};
-  addForm: any = {
-    username: "admin123",
-    password: "111111",
-    email: "111@qq.com",
-    mobile: "13412123434"
-  };
+  addForm: any = {};
+  dtbForm: any = {};
   addUserId: string = "";
   addUserRule: object = {
     username: [
@@ -163,8 +192,14 @@ export default class userManage extends Vue {
       }
     ]
   };
+  dtbRolesRules: object = {};
   created() {
     this.getUserList();
+    this.getAllRoles();
+  }
+  // 按照条件进行搜索
+  searchRes() {
+    this.getUserList(1, this.searchCont);
   }
   // 删除某个用户
   delThisUser(id: string) {
@@ -213,7 +248,6 @@ export default class userManage extends Vue {
         console.log(err);
       });
   }
-
   // 添加用户打开模态框
   addUserInfo(id: string) {
     this.showAddDialog = true;
@@ -244,9 +278,43 @@ export default class userManage extends Vue {
       });
     }
   }
+  // 分页变化触发的函数
   pageChange(val: any) {
     this.getUserList(val, this.searchCont);
   }
+  // 分配角色模态框
+  dtbRoles(obj: object) {
+    this.showDtbRoleDialog = true;
+    this.dtbForm = obj;
+  }
+  async ensureDtbRoles() {
+    const { id, chooseRole } = this.dtbForm;
+    let that: any = this;
+    if (!this.dtbForm.chooseRole) {
+      that.$message({
+        message: "请选择该用户的角色",
+        type: "warning"
+      });
+    } else {
+      const res = await axios.put(`/users/${id}/role`, { rid: chooseRole });
+      const { msg, status } = res.data.meta;
+      if (status === 200) {
+        this.showDtbRoleDialog = false;
+        this.getUserList();
+        that.$message({
+          message: msg,
+          type: "warning"
+        });
+      } else {
+        that.$message({
+          message: msg,
+          type: "warning"
+        });
+        return;
+      }
+    }
+  }
+  // 获取全部的用户列表
   getUserList(pagenum: number = 1, query: string = "") {
     let config = {
       params: {
@@ -274,6 +342,13 @@ export default class userManage extends Vue {
         }
       })
       .catch(err => {});
+  }
+  // 获取全部的角色信息
+  async getAllRoles() {
+    const res = await axios.get("/roles");
+    // console.log("角色信息", res);
+    this.roleList = res.data.data;
+    // console.log(this.roleList);
   }
 }
 </script>
