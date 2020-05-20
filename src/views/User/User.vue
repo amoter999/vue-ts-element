@@ -283,9 +283,11 @@ export default class userManage extends Vue {
     this.getUserList(val, this.searchCont);
   }
   // 分配角色模态框
-  dtbRoles(obj: object) {
+  dtbRoles(obj: any) {
     this.showDtbRoleDialog = true;
     this.dtbForm = obj;
+    console.log("============", obj);
+    this.dtbForm.chooseRole = obj.role_name;
   }
   async ensureDtbRoles() {
     const { id, chooseRole } = this.dtbForm;
