@@ -164,7 +164,10 @@ export default class userManage extends Vue {
   roleList: any[] = [];
   editForm: any = {};
   addForm: any = {};
-  dtbForm: any = {};
+  dtbForm: any = {
+    chooseRole: 0
+  };
+
   addUserId: string = "";
   addUserRule: object = {
     username: [
@@ -178,7 +181,7 @@ export default class userManage extends Vue {
     email: [
       { required: true, message: "请输入邮箱", trigger: "blur" },
       {
-        pattern: /^([0-9A-Za-z\-_\.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$/,
+        pattern: /^[0-9-]{15}$/,
         message: "邮箱格式不正确",
         trigger: "blur"
       }
@@ -197,6 +200,7 @@ export default class userManage extends Vue {
     this.getUserList();
     this.getAllRoles();
   }
+
   // 按照条件进行搜索
   searchRes() {
     this.getUserList(1, this.searchCont);
@@ -283,11 +287,13 @@ export default class userManage extends Vue {
     this.getUserList(val, this.searchCont);
   }
   // 分配角色模态框
-  dtbRoles(obj: any) {
+  async dtbRoles(obj: any) {
     this.showDtbRoleDialog = true;
-    this.dtbForm = obj;
     console.log("============", obj);
-    this.dtbForm.chooseRole = obj.role_name;
+    console.log("dtbForm", this.dtbForm);
+    const res = await axios.get(`/users/${obj.id}`);
+    this.dtbForm = { ...this.dtbForm, ...obj };
+    this.dtbForm.chooseRole = res.data.data.rid;
   }
   async ensureDtbRoles() {
     const { id, chooseRole } = this.dtbForm;
@@ -350,7 +356,7 @@ export default class userManage extends Vue {
     const res = await axios.get("/roles");
     // console.log("角色信息", res);
     this.roleList = res.data.data;
-    // console.log(this.roleList);
+    console.log("roleList", this.roleList);
   }
 }
 </script>

@@ -42,7 +42,12 @@
         <el-table-column label="操作" min-width="260px">
           <template slot-scope="scope">
             <el-button size="mini" icon="el-icon-edit-outline">编辑</el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              icon="el-icon-delete"
+              @click="showDelDialog(scope.row.id)"
+            >删除</el-button>
             <el-button
               size="mini"
               type="success"
@@ -88,6 +93,7 @@ export default class Role extends Vue {
     children: "children",
     label: "authName"
   };
+  delId: number = -1;
   created() {
     this.getRoleList();
     this.getRightTree();
@@ -102,6 +108,35 @@ export default class Role extends Vue {
     this.rightTree = res.data.data;
     // console.log(this.rightTree);
   }
+  // 删除弹框显示
+  showDelDialog(id: number) {
+    let that: any = this;
+    that
+      .$confirm("此操作将永久删除该用户, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+      .then(() => {
+        axios
+          .delete(`/roles/${id}`, {
+            headers: {
+              Authorization: sessionStorage.getItem("token")
+            }
+          })
+          .then(res => {
+            this.getRoleList();
+            that.$message({
+              type: "success",
+              message: "删除成功!"
+            });
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      });
+  }
+  // 分配角色弹框显示
   showDtbRolesDialog(obj: any) {
     this.showDtbRoleDialog = true;
     this.roleId = obj.id;
@@ -119,6 +154,7 @@ export default class Role extends Vue {
       setTree.setCheckedKeys(rightCheckTree);
     });
   }
+  // 确认分配角色
   async ensureDtbRole() {
     let setTree: any = this.$refs["tree"];
     let checkKeys = setTree.getCheckedKeys();
