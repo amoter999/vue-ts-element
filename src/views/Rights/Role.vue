@@ -8,6 +8,12 @@
       </el-breadcrumb>
     </div>
     <div class="role-main">
+      <div class="btns">
+        <el-input placeholder="这里的输入框就是摆设" class="input-with-select se-input">
+          <el-button slot="append" icon="el-icon-search"></el-button>
+        </el-input>
+        <el-button type="primary" plain @click="showAddDialog">添加新角色</el-button>
+      </div>
       <el-table :data="rolesList" style="width: 100%">
         <el-table-column type="expand">
           <template slot-scope="scope" v-if="scope.row.children">
@@ -41,7 +47,7 @@
         <el-table-column prop="roleDesc" label="角色描述"></el-table-column>
         <el-table-column label="操作" min-width="260px">
           <template slot-scope="scope">
-            <el-button size="mini" icon="el-icon-edit-outline">编辑</el-button>
+            <el-button size="mini" icon="el-icon-edit-outline" @click="showEditDialog(scope.row)">编辑</el-button>
             <el-button
               size="mini"
               type="danger"
@@ -58,6 +64,46 @@
         </el-table-column>
       </el-table>
     </div>
+    <el-dialog title="创建新角色" :close-on-click-modal="false" :visible.sync="isShowAddDialog">
+      <el-form :model="addForm" class="demo-ruleForm" label-width="80px" label-position="left">
+        <el-form-item label="角色名称">
+          <el-input type="text" v-model="addForm.roleName"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 4, maxRows: 7}"
+            placeholder="请输入内容"
+            :maxlength="200"
+            v-model="addForm.roleDesc"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="isShowAddDialog = false">取 消</el-button>
+        <el-button type="primary" @click="ensureAddNewRoles">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="编辑角色" :close-on-click-modal="false" :visible.sync="isShowEditDialog">
+      <el-form :model="editForm" class="demo-ruleForm" label-width="80px" label-position="left">
+        <el-form-item label="角色名称">
+          <el-input type="text" v-model="editForm.roleName"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 4, maxRows: 7}"
+            placeholder="请输入内容"
+            :maxlength="200"
+            v-model="editForm.roleDesc"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="isShowEditDialog = false">取 消</el-button>
+        <el-button type="primary" @click="ensureModUserInfo">确 定</el-button>
+      </div>
+    </el-dialog>
     <el-dialog title="分配权限" :close-on-click-modal="false" center :visible.sync="showDtbRoleDialog">
       <el-tree
         ref="tree"
@@ -87,6 +133,17 @@ import axios from "axios";
 export default class Role extends Vue {
   rolesList: any[] = [];
   showDtbRoleDialog: boolean = false;
+  isShowEditDialog: boolean = false;
+  isShowAddDialog: boolean = false;
+  editForm: any = {
+    roleName: "",
+    roleDesc: "",
+    id: ""
+  };
+  addForm: any = {
+    roleName: "",
+    roleDesc: ""
+  };
   rightTree: any[] = [];
   roleId: number = -1;
   defaultProps: object = {
@@ -100,15 +157,53 @@ export default class Role extends Vue {
   }
   async getRoleList() {
     const res = await axios.get("/roles");
-    console.log(res.data);
-    this.rolesList = res.data.data;
+    let arr: any = [];
+    res.data.data.forEach((item: any) => {
+      arr.unshift(item);
+    });
+    this.rolesList = arr;
   }
   async getRightTree() {
     const res = await axios.get("/rights/tree");
     this.rightTree = res.data.data;
-    // console.log(this.rightTree);
   }
-  // 删除弹框显示
+  // 添加弹框显示
+  showAddDialog() {
+    this.isShowAddDialog = true;
+  }
+  // 确认添加新角色
+  async ensureAddNewRoles() {
+    const res = await axios.post("/roles", this.addForm);
+    const { msg, status } = res.data.meta;
+    if (status === 201) {
+      this.isShowAddDialog = false;
+      this.getRoleList();
+      let that: any = this;
+      that.$message({
+        type: "success",
+        message: msg
+      });
+    }
+  }
+  // 编辑弹框显示
+  showEditDialog(obj: any) {
+    this.editForm["roleName"] = obj.roleName;
+    this.editForm["id"] = obj.id;
+    this.editForm["roleDesc"] = obj.roleDesc;
+    this.isShowEditDialog = true;
+  }
+  // 确认修改完成
+  async ensureModUserInfo() {
+    const res = await axios.put(`/roles/${this.editForm["id"]}`, this.editForm);
+    let that: any = this;
+    this.isShowEditDialog = false;
+    this.getRoleList();
+    that.$message({
+      type: "success",
+      message: res.data.meta.msg
+    });
+  }
+  // 删除弹框显示以及确认删除
   showDelDialog(id: number) {
     let that: any = this;
     that
@@ -140,7 +235,6 @@ export default class Role extends Vue {
   showDtbRolesDialog(obj: any) {
     this.showDtbRoleDialog = true;
     this.roleId = obj.id;
-    console.log(obj);
     this.$nextTick(() => {
       let rightCheckTree: any = [];
       obj.children.forEach((item1: any) => {
@@ -182,6 +276,13 @@ export default class Role extends Vue {
 </script>
 <style lang="scss">
 .Role {
+  .btns {
+    // text-align: right;
+    .se-input {
+      width: 300px;
+      margin-right: 15px;
+    }
+  }
   .role-main {
     margin-top: 20px;
     padding: 15px;
