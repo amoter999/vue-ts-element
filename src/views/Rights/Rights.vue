@@ -8,39 +8,16 @@
       </el-breadcrumb>
     </div>
     <div class="rightsMain">
-      <el-table :data="rolesList" style="width: 100%">
-        <el-table-column type="expand">
-          <template slot-scope="scope" v-if="scope.row.children">
-            <el-row v-for="level1 in scope.row.children" class="expandCont" :key="level1.id">
-              <el-col :span="4" class="lrlayout padTop">
-                <el-tag :closable="true" class="mbot">{{level1.authName}}</el-tag>
-                <i class="el-icon-arrow-right rightArrow1"></i>
-              </el-col>
-              <el-col :span="20">
-                <el-row class="perRow" v-for="level2 in level1.children" :key="level2.id">
-                  <el-col :span="4" class="lrlayout">
-                    <el-tag :closable="true" type="warning">{{level2.authName}}</el-tag>
-                    <i class="el-icon-arrow-right rightArrow"></i>
-                  </el-col>
-                  <el-col :span="20" class="padleft20">
-                    <el-tag
-                      :closable="true"
-                      class="perTag"
-                      type="success"
-                      v-for="level3 in level2.children"
-                      :key="level3.id"
-                    >{{level3.authName}}</el-tag>
-                  </el-col>
-                </el-row>
-              </el-col>
-            </el-row>
-          </template>
-        </el-table-column>
+      <el-table :data="rightList" style="width: 100%" stripe>
         <el-table-column width="50px" type="index"></el-table-column>
-        <el-table-column prop="roleName" label="权限名称"></el-table-column>
-        <el-table-column prop="roleDesc" label="路径"></el-table-column>
-        <el-table-column prop="roleDesc" label="层级">
-          <template slot="scope"></template>
+        <el-table-column prop="authName" label="权限名称"></el-table-column>
+        <el-table-column prop="path" label="路径"></el-table-column>
+        <el-table-column prop="level" label="层级">
+          <template slot-scope="scope">
+            <span v-if="scope.row.level === '0'">一级</span>
+            <span v-else-if="scope.row.level === '1'">二级</span>
+            <span v-else-if="scope.row.level === '2'">三级</span>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -56,10 +33,24 @@ import axios from "axios";
 })
 export default class Rights extends Vue {
   rightList: any = [];
-  created() {}
+  created() {
+    this.getRightLists();
+  }
+  async getRightLists() {
+    const res = await axios.get("/rights/list");
+    console.log("getRightLists", res);
+    this.rightList = res.data.data;
+  }
 }
 </script>
 <style lang="scss">
 .Rights {
+  .rightsMain {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px 0px #1169ac1a;
+    border-radius: 5px;
+  }
 }
 </style>

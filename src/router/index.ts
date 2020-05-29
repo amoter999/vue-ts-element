@@ -47,6 +47,11 @@ const routes: Array<RouteConfig> = [
         component: () => import("@/views/Goods/GoodsCate.vue")
       },
       {
+        path: "/addgood",
+        name: "addgood",
+        component: () => import("@/views/Goods/AddGood.vue")
+      },
+      {
         path: "/params",
         name: "params",
         component: () => import("@/views/Goods/Categary.vue")

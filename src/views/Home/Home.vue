@@ -31,7 +31,7 @@
             :router="true"
             :style="{width:setSideWidth}"
             @open="handleOpen"
-            default-active="/users"
+            :default-active="defaultActive"
             :collapse-transition="false"
             :collapse="isCollapse"
             @close="handleClose"
@@ -65,7 +65,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue } from "vue-property-decorator";
+import { Vue, Watch } from "vue-property-decorator";
 import Component from "vue-class-component";
 import axios from "axios";
 @Component({
@@ -81,11 +81,16 @@ export default class Home extends Vue {
   isCollapse: boolean = false;
   isStart: boolean = false;
   setSideWidth: string = "200px";
+  defaultActive: string = "";
   clickCollapse() {
     this.isCollapse = !this.isCollapse;
     this.isCollapse
       ? (this.setSideWidth = "auto")
       : (this.setSideWidth = "200px");
+  }
+  @Watch("$route")
+  routeChange(val: any, oldVal: any) {
+    this.defaultActive = val.path;
   }
   //图片路径拼接
   handleCommand(command: any) {
@@ -138,6 +143,9 @@ export default class Home extends Vue {
     console.log(res);
     this.menuList = res.data.data;
     console.log("this.menuList", this.menuList);
+    this.defaultActive = location.href.split("#")[1];
+    // console.log("arr", arr);
+    //
   }
   getIcon(icon: string) {
     try {
