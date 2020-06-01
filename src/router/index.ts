@@ -8,6 +8,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/home",
+    name: "home",
     redirect: "/users"
   },
   {
