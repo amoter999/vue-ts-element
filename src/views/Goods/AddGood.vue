@@ -4,76 +4,47 @@
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>商品管理</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/goods' }"
-          >商品列表</el-breadcrumb-item
-        >
+        <el-breadcrumb-item :to="{ path: '/goods' }">商品列表</el-breadcrumb-item>
         <el-breadcrumb-item>添加商品</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="addgood-main">
       <el-steps :active="active" finish-status="success" align-center>
-        <el-step
-          title="第一步"
-          description="基础信息"
-          icon="el-icon-setting"
-        ></el-step>
-        <el-step
-          title="第二步"
-          description="商品图片"
-          icon="el-icon-picture"
-        ></el-step>
-        <el-step
-          title="第三步"
-          description="商品内容"
-          icon="el-icon-edit-outline"
-        ></el-step>
+        <el-step title="第一步" description="基础信息" icon="el-icon-setting"></el-step>
+        <el-step title="第二步" description="商品图片" icon="el-icon-picture"></el-step>
+        <el-step title="第三步" description="商品内容" icon="el-icon-edit-outline"></el-step>
       </el-steps>
       <div class="tabMain">
         <el-tabs :tab-position="tabPosition" v-model="tabActive">
           <el-tab-pane label="基础信息" disabled name="baseinfo">
             <div class="tipText">请填写商品的基础信息</div>
-            <el-form ref="form" :model="goodForm" label-width="80px">
+            <el-form ref="form" :rules="addGoodRules" :model="goodForm" label-width="100px">
               <el-form-item label="商品名称">
-                <el-input
-                  v-model="goodForm.goods_name"
-                  placeholder="请输入商品名称"
-                ></el-input>
+                <el-input v-model="goodForm.goods_name" placeholder="请输入商品名称"></el-input>
               </el-form-item>
-              <el-form-item label="商品价格">
-                <el-input
-                  v-model="goodForm.goods_price"
-                  placeholder="请输入商品价格"
-                ></el-input>
-              </el-form-item>
-              <el-form-item label="商品数量">
-                <el-input
-                  v-model="goodForm.goods_number"
-                  placeholder="请输入商品数量"
-                ></el-input>
-              </el-form-item>
-              <el-form-item label="商品重量">
-                <el-input
-                  v-model="goodForm.goods_weight"
-                  placeholder="请输入商品重量"
-                ></el-input>
-              </el-form-item>
-              <el-form-item label="商品分类">
+              <el-form-item label="商品分类" class="cateItem">
                 <el-cascader
-                  v-model="value"
+                  v-model="goodForm.goods_cat"
                   :options="cateOptionList"
-                  @change="handleChange"
+                  :props="{ label: 'cat_name', value: 'cat_id' }"
                 ></el-cascader>
               </el-form-item>
               <el-form-item label="是否促销">
                 <el-switch v-model="goodForm.is_promote"></el-switch>
               </el-form-item>
+              <el-form-item label="商品价格">
+                <el-input v-model="goodForm.goods_price" placeholder="请输入商品价格"></el-input>
+              </el-form-item>
+              <el-form-item label="商品数量">
+                <el-input v-model="goodForm.goods_number" placeholder="请输入商品数量"></el-input>
+              </el-form-item>
+              <el-form-item label="商品重量">
+                <el-input v-model="goodForm.goods_weight" placeholder="请输入商品重量"></el-input>
+              </el-form-item>
+
               <div class="btns">
-                <el-button type="primary" @click="back(-1)" plain
-                  >返回</el-button
-                >
-                <el-button type="primary" @click="next(1, 'goodpic')"
-                  >下一步</el-button
-                >
+                <el-button type="primary" @click="back(-1)" plain>返回</el-button>
+                <el-button type="primary" @click="next(1, 'goodpic')">下一步</el-button>
               </div>
             </el-form>
           </el-tab-pane>
@@ -92,20 +63,14 @@
               <img width="100%" :src="dialogImageUrl" alt />
             </el-dialog>
             <div class="btns">
-              <el-button type="primary" @click="back(0, 'baseinfo')" plain
-                >返回</el-button
-              >
-              <el-button type="primary" @click="next(2, 'goodcont')"
-                >下一步</el-button
-              >
+              <el-button type="primary" @click="back(0, 'baseinfo')" plain>返回</el-button>
+              <el-button type="primary" @click="next(2, 'goodcont')">下一步</el-button>
             </div>
           </el-tab-pane>
           <el-tab-pane label="商品内容" disabled name="goodcont">
             <div class="tipText">请填写商品描述内容</div>
             <div class="btns">
-              <el-button type="primary" @click="back(1, 'goodpic')" plain
-                >返回</el-button
-              >
+              <el-button type="primary" @click="back(1, 'goodpic')" plain>返回</el-button>
               <el-button type="primary" @click="finish">完成</el-button>
             </div>
           </el-tab-pane>
@@ -132,10 +97,36 @@ export default class AddGood extends Vue {
     goods_price: "",
     goods_number: "",
     goods_weight: "",
-    goods_cat: "",
+    goods_cat: [],
     is_promote: false,
-    pic: [],
-    goods_introduct: ""
+    pics: [],
+    goods_introduce: ""
+  };
+  addGoodRules: object = {
+    goods_name: [
+      { required: true, message: "请输入活动名称", trigger: "blur" },
+      { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
+    ],
+    goods_price: [
+      { required: true, message: "请输入活动名称", trigger: "blur" },
+      { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
+    ],
+    goods_number: [
+      { required: true, message: "请输入活动名称", trigger: "blur" },
+      { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
+    ],
+    goods_weight: [
+      { required: true, message: "请输入活动名称", trigger: "blur" },
+      { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
+    ],
+    goods_cat: [
+      { required: true, message: "请输入活动名称", trigger: "blur" },
+      { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
+    ],
+    is_promote: [
+      { required: true, message: "请输入活动名称", trigger: "blur" },
+      { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
+    ]
   };
   cateOptionList: object[] = [];
   dialogImageUrl: string = "";
@@ -149,7 +140,8 @@ export default class AddGood extends Vue {
         type: 3
       }
     });
-    console.log(res);
+    this.cateOptionList = res.data.data;
+    console.log("cateOptionList", this.cateOptionList);
   }
   next(step: number, tab: string) {
     this.active = step;
@@ -186,6 +178,12 @@ export default class AddGood extends Vue {
       margin-top: 30px;
       .el-tabs--left .el-tabs__header.is-left {
         margin-right: 15px;
+      }
+      .el-form-item__label {
+        text-align: left;
+      }
+      .cateItem {
+        position: relative;
       }
       .el-upload-list {
         padding-left: 12px;

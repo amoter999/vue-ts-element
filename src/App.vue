@@ -19,4 +19,7 @@ body,
   max-width: 100vw;
   min-height: 100vh;
 }
+.el-cascader-panel {
+  height: 300px;
+}
 </style>
