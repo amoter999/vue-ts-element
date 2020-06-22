@@ -9,18 +9,36 @@
     </div>
     <div class="goods-main">
       <div class="btns">
-        <el-input placeholder="这里的输入框就是摆设" class="input-with-select se-input">
+        <el-input
+          placeholder="这里的输入框就是摆设"
+          class="input-with-select se-input"
+        >
           <el-button slot="append" icon="el-icon-search"></el-button>
         </el-input>
-        <el-button type="primary" plain @click="enterAddGoodPage">添加新商品</el-button>
+        <el-button type="primary" plain @click="enterAddGoodPage"
+          >添加新商品</el-button
+        >
       </div>
       <el-table :data="goodList" style="width: 100%">
         <el-table-column width="50px" type="index"></el-table-column>
         <el-table-column prop="goods_name" label="商品名称"></el-table-column>
-        <el-table-column prop="goods_price" label="商品价格(元)"></el-table-column>
-        <el-table-column prop="goods_number" label="商品数量(个)"></el-table-column>
-        <el-table-column prop="goods_weight" label="商品重量(kg)"></el-table-column>
-        <el-table-column prop="add_time" :formatter="dateFormat" label="创建时间"></el-table-column>
+        <el-table-column
+          prop="goods_price"
+          label="商品价格(元)"
+        ></el-table-column>
+        <el-table-column
+          prop="goods_number"
+          label="商品数量(个)"
+        ></el-table-column>
+        <el-table-column
+          prop="goods_weight"
+          label="商品重量(kg)"
+        ></el-table-column>
+        <el-table-column
+          prop="add_time"
+          :formatter="dateFormat"
+          label="创建时间"
+        ></el-table-column>
         <el-table-column label="操作" width="180">
           <template slot-scope="scope">
             <el-button
@@ -28,13 +46,15 @@
               type="danger"
               icon="el-icon-delete"
               @click="delThisGood(scope.row)"
-            >删除</el-button>
+              >删除</el-button
+            >
             <el-button
               size="mini"
               type="primary"
               icon="el-icon-edit"
               @click="editThisGood(scope.row)"
-            >编辑</el-button>
+              >编辑</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -49,8 +69,17 @@
         ></el-pagination>
       </div>
     </div>
-    <el-dialog title="编辑商品" :close-on-click-modal="false" :visible.sync="isShowEditDialog">
-      <el-form :model="editForm" class="demo-ruleForm" label-width="80px" label-position="left">
+    <el-dialog
+      title="编辑商品"
+      :close-on-click-modal="false"
+      :visible.sync="isShowEditDialog"
+    >
+      <el-form
+        :model="editForm"
+        class="demo-ruleForm"
+        label-width="80px"
+        label-position="left"
+      >
         <el-form-item label="商品名称">
           <el-input type="text" v-model="editForm.goodName"></el-input>
         </el-form-item>
@@ -78,7 +107,7 @@
 import { Vue } from "vue-property-decorator";
 import Component from "vue-class-component";
 import axios from "axios";
-import moment from "moment";
+import dayjs from "dayjs";
 @Component({
   name: "Goods",
   components: {}
@@ -141,7 +170,8 @@ export default class Goods extends Vue {
     if (date == undefined) {
       return "";
     }
-    return moment(date).format("YYYY年MM月DD日 HH:mm:ss");
+    console.log("created date", date);
+    return dayjs(date).format("YYYY年MM月DD日 HH:mm:ss");
   }
   enterAddGoodPage() {
     this.$router.push({

@@ -48,6 +48,7 @@ import {
   Progress,
   Badge,
   Card,
+  Calendar,
   Rate,
   Steps,
   Step,
@@ -88,6 +89,7 @@ Vue.use(Checkbox);
 Vue.use(CheckboxButton);
 Vue.use(CheckboxGroup);
 Vue.use(Switch);
+Vue.use(Calendar);
 Vue.use(Select);
 Vue.use(Option);
 Vue.use(OptionGroup);
