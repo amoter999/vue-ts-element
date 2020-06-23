@@ -10,20 +10,14 @@
             <i class="el-icon-s-unfold" @click="clickCollapse"></i>
           </div>
           <div class="right-head-cont">
-            <el-dropdown @command="handleCommand">
+            <el-dropdown @command="handleCommand" trigger="click">
               <span class="el-dropdown-link">
-                <img
-                  :src="getIcon(assetImgs.avatarImg)"
-                  class="avatarImg"
-                  alt
-                />
+                <img :src="getIcon(assetImgs.avatarImg)" class="avatarImg" alt />
                 <i class="el-icon-arrow-down el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown" :split-button="true">
                 <el-dropdown-item command="profile">个人中心</el-dropdown-item>
-                <el-dropdown-item command="logout" @click="logout"
-                  >退出</el-dropdown-item
-                >
+                <el-dropdown-item command="logout" @click="logout">退出</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -51,18 +45,9 @@
                 <i v-if="floorItem1.id === 125" class="el-icon-user"></i>
 
                 <i v-else-if="floorItem1.id === 103" class="el-icon-set-up"></i>
-                <i
-                  v-else-if="floorItem1.id === 101"
-                  class="el-icon-collection-tag"
-                ></i>
-                <i
-                  v-else-if="floorItem1.id === 102"
-                  class="el-icon-notebook-1"
-                ></i>
-                <i
-                  v-else-if="floorItem1.id === 145"
-                  class="el-icon-data-board"
-                ></i>
+                <i v-else-if="floorItem1.id === 101" class="el-icon-collection-tag"></i>
+                <i v-else-if="floorItem1.id === 102" class="el-icon-notebook-1"></i>
+                <i v-else-if="floorItem1.id === 145" class="el-icon-data-board"></i>
 
                 <span>{{ floorItem1.authName }}</span>
               </template>
@@ -74,29 +59,17 @@
                 <i v-if="floorItem2.id === 110" class="el-icon-s-order"></i>
                 <i v-else-if="floorItem2.id === 111" class="el-icon-coin"></i>
                 <i v-else-if="floorItem2.id === 112" class="el-icon-house"></i>
-                <i
-                  v-else-if="floorItem2.id === 104"
-                  class="el-icon-collection"
-                ></i>
-                <i
-                  v-else-if="floorItem2.id === 115"
-                  class="el-icon-suitcase"
-                ></i>
+                <i v-else-if="floorItem2.id === 104" class="el-icon-collection"></i>
+                <i v-else-if="floorItem2.id === 115" class="el-icon-suitcase"></i>
                 <i v-else-if="floorItem2.id === 121" class="el-icon-school"></i>
-                <i
-                  v-else-if="floorItem2.id === 107"
-                  class="el-icon-shopping-cart-full"
-                ></i>
-                <i
-                  v-else-if="floorItem2.id === 146"
-                  class="el-icon-data-analysis"
-                ></i>
+                <i v-else-if="floorItem2.id === 107" class="el-icon-shopping-cart-full"></i>
+                <i v-else-if="floorItem2.id === 146" class="el-icon-data-analysis"></i>
                 <!-- <i v-if="floorItem2.id === 111" class="el-icon-coin"></i> -->
                 <!-- 
                   <i v-if="floorItem2.id === 110" class="el-icon-s-order"></i>
                   <i v-if="floorItem2.id === 110" class="el-icon-s-order"></i>
                   <i v-if="floorItem2.id === 110" class="el-icon-s-order"></i>
-                  <i v-if="floorItem2.id === 110" class="el-icon-s-order"></i> -->
+                <i v-if="floorItem2.id === 110" class="el-icon-s-order"></i>-->
                 <span>{{ floorItem2.authName }}</span>
               </el-menu-item>
             </el-submenu>

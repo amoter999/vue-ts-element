@@ -85,7 +85,7 @@ export default class Login extends Vue {
         // 注意：先保存 token ，再跳转路由，因为 跳转路由的时候，导航守卫中获取了 token。如果在获取token前，没有存储 token ，就出问题了
         sessionStorage.setItem("token", res.data.data.token);
         // 1 跳转到首页
-        this.$router.push({ name: "home" });
+        this.$router.push({ name: "homemain" });
         // 2 登录成功的消息提示：
         myThis.$message({
           message: res.data.meta.msg,

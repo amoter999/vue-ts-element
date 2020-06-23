@@ -7,10 +7,11 @@ import axios from "axios";
 import "font-awesome/css/font-awesome.css";
 
 Vue.prototype.$http = axios;
+// Vue.use(ElTreeGrid)
 
 // 注册全局组件：element-tree-grid
 // 注册后，就可以在任意的单文件组件中使用了
-// Vue.component(ElTreeGrid.name, ElTreeGrid)
+// Vue.component(ElTreeGrid.name, ElTreeGrid);
 
 // 配置基础路径
 axios.defaults.baseURL = "http://localhost:8888/api/private/v1/";
